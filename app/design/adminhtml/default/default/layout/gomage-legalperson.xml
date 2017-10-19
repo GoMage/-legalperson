@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+ /**
+ * GoMage LegalPerson Extension
+ *
+ * @category     Extension
+ * @copyright    Copyright (c) 2010-2017 GoMage (https://www.gomage.com)
+ * @author       GoMage
+ * @license      https://www.gomage.com/license-agreement/  Single domain license
+ * @terms of use https://www.gomage.com/terms-of-use
+ * @version      Release: 1.0.0
+ * @since        Class available since Release 1.0.0
+ */
+ -->
+<layout version="1.0">
+    <adminhtml_customer_edit>
+        <update handle="legalperson_layout_update"/>
+    </adminhtml_customer_edit>
+    <adminhtml_sales_order_create_index>
+        <update handle="legalperson_layout_update"/>
+    </adminhtml_sales_order_create_index>
+    <legalperson_layout_update>
+        <reference name="head">
+            <action method="addJs">
+                <script>gomage/legalperson/core.js</script>
+            </action>
+            <action method="addJs">
+                <script>gomage/legalperson/validator.js</script>
+            </action>
+        </reference>
+        <reference name="optional_zip_countries">
+            <action method="setTemplate">
+                <template>gomage/legalperson/optional_zip_countries.phtml</template>
+            </action>
+        </reference>
+    </legalperson_layout_update>
+</layout>

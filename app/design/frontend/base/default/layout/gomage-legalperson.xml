@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+ /**
+ * GoMage LegalPerson Extension
+ *
+ * @category     Extension
+ * @copyright    Copyright (c) 2010-2017 GoMage (https://www.gomage.com)
+ * @author       GoMage
+ * @license      https://www.gomage.com/license-agreement/  Single domain license
+ * @terms of use https://www.gomage.com/terms-of-use
+ * @version      Release: 1.0.0
+ * @since        Class available since Release 1.0.0
+ */
+ -->
+<layout version="0.1.0">
+    <customer_address_form>
+        <reference name="head">
+            <action method="addJs">
+                <script>gomage/legalperson/core.js</script>
+            </action>
+            <action method="addJs">
+                <script>gomage/legalperson/validator.js</script>
+            </action>
+        </reference>
+        <reference name="customer_address_edit">
+            <block type="gomage_legalperson/address_fields" name="gomage_legalperson_address_fields"
+                   template="gomage/legalperson/address/fields.phtml"/>
+            <action method="setTemplate">
+                <template>gomage/legalperson/customer/address/edit.phtml</template>
+            </action>
+        </reference>
+    </customer_address_form>
+    <gomage_checkout_onepage_index>
+        <reference name="head">
+            <action method="addJs">
+                <script>gomage/legalperson/core.js</script>
+            </action>
+            <action method="addJs">
+                <script>gomage/legalperson/validator.js</script>
+            </action>
+        </reference>
+    </gomage_checkout_onepage_index>
+</layout>

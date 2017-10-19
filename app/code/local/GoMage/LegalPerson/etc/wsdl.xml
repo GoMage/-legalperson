@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:typens="urn:{{var wsdl.name}}" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             name="{{var wsdl.name}}" targetNamespace="urn:{{var wsdl.name}}">
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:Magento">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/"
+                    schemaLocation="http://schemas.xmlsoap.org/soap/encoding/"/>
+            <complexType name="salesOrderAddressEntity">
+                <all>
+                    <element name="gm_lp_type" type="xsd:int" minOccurs="0"/>
+                    <element name="gm_lp_tro" type="xsd:string" minOccurs="0"/>
+                    <element name="gm_lp_bank" type="xsd:string" minOccurs="0"/>
+                    <element name="gm_lp_iban" type="xsd:string" minOccurs="0"/>
+                    <element name="gm_lp_pc" type="xsd:string" minOccurs="0"/>
+                    <element name="gm_lp_card" type="xsd:string" minOccurs="0"/>
+                </all>
+            </complexType>
+        </schema>
+    </types>
+</definitions>

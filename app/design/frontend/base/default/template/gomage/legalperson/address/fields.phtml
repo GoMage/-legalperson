@@ -1,0 +1,57 @@
+<?php
+/**
+ * GoMage LegalPerson Extension
+ *
+ * @category     Extension
+ * @copyright    Copyright (c) 2010-2017 GoMage (https://www.gomage.com)
+ * @author       GoMage
+ * @license      https://www.gomage.com/license-agreement/  Single domain license
+ * @terms of use https://www.gomage.com/terms-of-use
+ * @version      Release: 1.0.0
+ * @since        Class available since Release 1.0.0
+ */
+?>
+<?php
+/**
+ * @var $this GoMage_LegalPerson_Block_Address_Fields
+ */
+?>
+<?php if ($this->isEnabled()): ?>
+    <li class="wide">
+        <label for="gm_lp_type" class="required"><em>*</em><?php echo $this->__('Person Type') ?></label>
+        <div class="input-box">
+            <select id="<?php echo $this->getFieldId('gm_lp_type') ?>"
+                    name="<?php echo $this->getFieldName('gm_lp_type') ?>" class="gm_lp_type"
+                    title="<?php echo $this->__('Person Type') ?>">
+                <?php foreach ($this->getPersonTypeOptions() as $key => $label): ?>
+                    <option <?php if ($key == $this->getPersonType()): ?> selected="selected"<?php endif; ?>
+                            value="<?php echo $key ?>"><?php echo $label ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </li>
+    <?php foreach ($this->getTextFields() as $key => $label): ?>
+        <li class="wide">
+            <label for="<?php echo $key ?>" class="required"><em>*</em><?php echo $this->__($label) ?></label>
+            <div class="input-box">
+                <input type="text" name="<?php echo $this->getFieldName($key) ?>"
+                       value="<?php echo $this->escapeHtml($this->getAddress()->getData($key)) ?>"
+                       title="<?php echo Mage::helper('core')->quoteEscape($this->__($label)) ?>"
+                       id="<?php echo $this->getFieldId($key) ?>"
+                       class="input-text <?php echo $key ?>"/>
+            </div>
+        </li>
+    <?php endforeach; ?>
+    <script type="text/javascript">
+        //<![CDATA[
+        gmLegalPersonConfig = <?php echo $this->helper('gomage_legalperson')->getConfig(true) ?>;
+        <?php echo $this->getFieldId('gmLegalPerson') ?> = new GoMage.LegalPerson(gmLegalPersonConfig, 'li', '<?php echo $this->getCountryElementId() ?>');
+        Event.observe(window, "load", function () {
+            $('<?php echo $this->getFieldId($this->getCountryElementId()) ?>').observe('change', function (event) {
+                <?php echo $this->getFieldId('gmLegalPerson') ?>.onAddressCountryChanged($('<?php echo $this->getFieldId($this->getCountryElementId()) ?>'));
+            });
+            <?php echo $this->getFieldId('gmLegalPerson') ?>.onAddressCountryChanged($('<?php echo $this->getFieldId($this->getCountryElementId()) ?>'));
+        });
+        //]]>
+    </script>
+<?php endif; ?>
