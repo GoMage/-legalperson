@@ -1,4 +1,5 @@
 <?php
+
 /**
  * GoMage LegalPerson Extension
  *
@@ -125,6 +126,20 @@ class GoMage_LegalPerson_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        if (Mage::app()->getStore()->isAdmin()) {
+            return true;
+        }
+        if (Mage::getDesign()->getArea() == 'adminhtml') {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @param bool $asJson
      * @return array|string
      */
@@ -143,6 +158,7 @@ class GoMage_LegalPerson_Helper_Data extends Mage_Core_Helper_Abstract
                 return $field->toArray();
             }, $this->getLegalFields()
             );
+            $this->_config['is_admin']  = $this->isAdmin();
         }
         if ($asJson) {
             return Mage::helper('core')->jsonEncode($this->_config);

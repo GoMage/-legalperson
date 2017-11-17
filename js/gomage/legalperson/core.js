@@ -69,11 +69,25 @@ GoMage.LegalPerson.prototype = {
             field.up(this.wrapper).show();
             var requiredElement = field.up(1).down('label > span.required') ||
                 field.up(1).down('label > em');
+            if (!requiredElement) {
+                var label = field.up(1).down('label');
+                if (label) {
+                    if (this.config.is_admin) {
+                        label.insert('<span class="required">*</span>');
+                    } else {
+                        label.insert('<em>*</em>');
+                    }
+                    requiredElement = field.up(1).down('label > span.required') ||
+                        field.up(1).down('label > em');
+                }
+            }
             if (required) {
                 field.addClassName('required-entry');
                 if (requiredElement) {
                     requiredElement.show();
-                    requiredElement.up('label').addClassName('required');
+                    if (!this.config.is_admin) {
+                        requiredElement.up('label').addClassName('required');
+                    }
                 }
             } else {
                 while (field.hasClassName('required-entry')) {
