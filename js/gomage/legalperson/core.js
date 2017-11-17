@@ -30,11 +30,14 @@ GoMage.LegalPerson.prototype = {
     bindSwitcherEvent: function (switcher) {
         if (this.switchersEvents.indexOf(switcher.id) == -1) {
             this.switchersEvents.push(switcher.id);
-            switcher.observe('change', function (e) {
-                var elm = e.target || e.srcElement;
-                this.change(elm);
-            }.bind(this));
+        } else {
+            switcher.stopObserving('change');
         }
+        switcher.observe('change', function (e) {
+            var elm = e.target || e.srcElement;
+            this.change(elm);
+        }.bind(this));
+
     },
     onAddressCountryChanged: function (countryElement) {
         var switcher = $(countryElement.id.replace(this.countryElementId, this.config.switcher.name));
