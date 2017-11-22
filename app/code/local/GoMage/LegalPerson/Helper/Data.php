@@ -166,4 +166,162 @@ class GoMage_LegalPerson_Helper_Data extends Mage_Core_Helper_Abstract
         return $this->_config;
     }
 
+    public function getAllStoreDomains()
+    {
+        $domains = array();
+
+        foreach (Mage::app()->getWebsites() as $website) {
+            $url = $website->getConfig('web/unsecure/base_url');
+            if ($domain = trim(preg_replace('/^.*?\\/\\/(.*)?\\//', '$1', $url))) {
+                $domains[] = $domain;
+            }
+
+            $url = $website->getConfig('web/secure/base_url');
+
+            if ($domain = trim(preg_replace('/^.*?\\/\\/(.*)?\\//', '$1', $url))) {
+                $domains[] = $domain;
+            }
+        }
+        return array_unique($domains);
+    }
+
+    public function getAvailableWebsites()
+    {
+        return $this->_w();
+    }
+
+    protected function _w()
+    {
+        if (!Mage::getStoreConfig('gomage_activation/legalperson/installed') ||
+            (intval(Mage::getStoreConfig('gomage_activation/legalperson/count')) > 10)
+        ) {
+            return array();
+        }
+
+        $time_to_update = 60 * 60 * 24 * 15;
+
+        $r = Mage::getStoreConfig('gomage_activation/legalperson/ar');
+        $t = Mage::getStoreConfig('gomage_activation/legalperson/time');
+        $s = Mage::getStoreConfig('gomage_activation/legalperson/websites');
+
+        $last_check = str_replace($r, '', Mage::helper('core')->decrypt($t));
+
+        $allsites = explode(',', str_replace($r, '', Mage::helper('core')->decrypt($s)));
+        $allsites = array_diff($allsites, array(""));
+
+        if (($last_check + $time_to_update) < time()) {
+            $this->a(Mage::getStoreConfig('gomage_activation/legalperson/key'),
+                intval(Mage::getStoreConfig('gomage_activation/legalperson/count')),
+                implode(',', $allsites)
+            );
+        }
+
+        return $allsites;
+    }
+
+    public function a($k, $c = 0, $s = '')
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, sprintf('https://www.gomage.com/index.php/gomage_downloadable/key/check'));
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, 'key=' . urlencode($k) . '&sku=legal-person&domains=' . urlencode(implode(',', $this->getAllStoreDomains())) . '&ver=' . urlencode('1.0.0'));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+
+        $content = curl_exec($ch);
+
+        try {
+            $r = Zend_Json::decode($content);
+        } catch (\Exception $e) {
+            $r = array();
+        }
+
+        $e = Mage::helper('core');
+        if (empty($r)) {
+
+            $value1 = Mage::getStoreConfig('gomage_activation/legalperson/ar');
+
+            $groups = array(
+                'legalperson' => array(
+                    'fields' => array(
+                        'ar'       => array(
+                            'value' => $value1
+                        ),
+                        'websites' => array(
+                            'value' => (string)Mage::getStoreConfig('gomage_activation/legalperson/websites')
+                        ),
+                        'time'     => array(
+                            'value' => (string)$e->encrypt($value1 . (time() - (60 * 60 * 24 * 15 - 1800)) . $value1)
+                        ),
+                        'count'    => array(
+                            'value' => $c + 1)
+                    )
+                )
+            );
+
+            Mage::getModel('adminhtml/config_data')
+                ->setSection('gomage_activation')
+                ->setGroups($groups)
+                ->save();
+
+            Mage::getConfig()->reinit();
+            Mage::app()->reinitStores();
+
+            return;
+        }
+
+        $value1 = '';
+        $value2 = '';
+
+        if (isset($r['d']) && isset($r['c'])) {
+            $value1 = $e->encrypt(base64_encode(Zend_Json::encode($r)));
+
+            if (!$s) {
+                $s = Mage::getStoreConfig('gomage_activation/legalperson/websites');
+            }
+
+            $s      = array_slice(explode(',', $s), 0, $r['c']);
+            $value2 = $e->encrypt($value1 . implode(',', $s) . $value1);
+        }
+        $groups = array(
+            'legalperson' => array(
+                'fields' => array(
+                    'ar'        => array(
+                        'value' => $value1
+                    ),
+                    'websites'  => array(
+                        'value' => (string)$value2
+                    ),
+                    'time'      => array(
+                        'value' => (string)$e->encrypt($value1 . time() . $value1)
+                    ),
+                    'installed' => array(
+                        'value' => 1
+                    ),
+                    'count'     => array(
+                        'value' => 0)
+
+                )
+            )
+        );
+
+        Mage::getModel('adminhtml/config_data')
+            ->setSection('gomage_activation')
+            ->setGroups($groups)
+            ->save();
+
+        Mage::getConfig()->reinit();
+        Mage::app()->reinitStores();
+
+    }
+
+    public function ga()
+    {
+        $ar = base64_decode(Mage::helper('core')->decrypt(Mage::getStoreConfig('gomage_activation/legalperson/ar')));
+        return $ar ? Zend_Json::decode($ar) : array();
+    }
+
 }

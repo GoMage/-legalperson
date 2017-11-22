@@ -177,6 +177,17 @@
         </fieldsets>
     </global>
     <adminhtml>
+        <events>
+            <admin_system_config_changed_section_gomage_activation>
+                <observers>
+                    <legalperson_changed_section_gomage_activation>
+                        <type>model</type>
+                        <class>gomage_legalperson/observer</class>
+                        <method>checkK</method>
+                    </legalperson_changed_section_gomage_activation>
+                </observers>
+            </admin_system_config_changed_section_gomage_activation>
+        </events>
         <layout>
             <updates>
                 <gomage_legalperson module="gomage_legalperson">
@@ -202,20 +213,12 @@
                 <default>0</default>
             </person>
             <natural_person>
-                <gm_lp_tro></gm_lp_tro>
-                <gm_lp_bank></gm_lp_bank>
-                <gm_lp_iban></gm_lp_iban>
                 <gm_lp_pc>opt</gm_lp_pc>
-                <gm_lp_card></gm_lp_card>
-                <company></company>
-                <vat_id></vat_id>
             </natural_person>
             <legal_person>
                 <gm_lp_tro>req</gm_lp_tro>
                 <gm_lp_bank>req</gm_lp_bank>
                 <gm_lp_iban>req</gm_lp_iban>
-                <gm_lp_pc></gm_lp_pc>
-                <gm_lp_card></gm_lp_card>
                 <company>req</company>
                 <vat_id>req</vat_id>
             </legal_person>
